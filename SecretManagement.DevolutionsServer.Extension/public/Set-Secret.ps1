@@ -23,14 +23,17 @@ function Set-Secret {
 
         switch ($Secret.GetType()) {
             ([pscredential]) {
+                Write-Verbose "[pscredential] detected" -Verbose:$verboseEnabled
                 $username = $Secret.Username;
                 $password = ConvertFrom-SecureString -SecureString $Secret.Password -AsPlainText;
             }
             ([String]) {
+                Write-Verbose "[String] detected" -Verbose:$verboseEnabled
                 $username = Read-Host 'Username ';
                 $password = $Secret;
             }
             ([securestring]) {
+                Write-Verbose "[securestring] detected" -Verbose:$verboseEnabled
                 $username = Read-Host 'Username ';
                 $password = ConvertFrom-SecureString -SecureString $Secret -AsPlainText
             }
@@ -40,7 +43,7 @@ function Set-Secret {
         }
         
         # null reference in the DS module
-        New-DSCredentialEntry -VaultId $vaultId -ConnectionSubType 26 -EntryName $entryName -Username $username -Password $password
+        New-DSCredentialEntry -VaultId $vaultId -ConnectionSubType 26 -EntryName $Name -Username $username -Password $password
         Write-Verbose "Entry Added" -Verbose:$verboseEnabled
     }
     catch {
