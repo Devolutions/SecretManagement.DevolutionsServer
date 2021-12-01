@@ -6,8 +6,10 @@ function Disconnect-DevolutionsServer {
     param(
         [hashtable] $dsParameters
     )
-
     
     Write-Verbose "Closing Devolutions Server Session" -Verbose:$verboseEnabled
-    Close-DSSession -Verbose:$verboseEnabled
+    if ($Global:DSSessionToken)
+    {
+        Close-DSSession
+    }
 }

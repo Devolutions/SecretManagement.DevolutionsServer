@@ -54,7 +54,7 @@ RequiredModules = @(
     }, 
     @{
         ModuleName = 'Devolutions.Server'
-        ModuleVersion = '2021.5.0'
+        ModuleVersion = '2021.6.0'
     }
 )
 

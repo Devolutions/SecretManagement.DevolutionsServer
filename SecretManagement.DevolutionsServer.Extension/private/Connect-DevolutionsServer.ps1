@@ -11,18 +11,11 @@ function Connect-DevolutionsServer {
         throw "VaultId not found! Please configure a Devolutions Server VaultId to your SecretVault."
     }
     
-    Write-Verbose 'Running on test version 8.24.11.05' -Verbose:$verboseEnabled
     Write-Verbose $DSParameters.VaultId -Verbose:$verboseEnabled
-    # Write-Verbose ConvertFrom-SecureString -SecureString $DSParameters.credentials["Password"] -AsPlainText -Verbose:$verboseEnabled
-
     Write-Verbose 'Connecting to Devolutions Server' -Verbose:$verboseEnabled
-    #make sure not already connected
-    #fix credential prompt
-    $pass = ConvertTo-SecureString "Masterkey!" -AsPlainText
-    [pscredential]$creds = New-Object System.Management.Automation.PSCredential ("sa", $pass)
-    Write-Verbose $creds -Verbose:$verboseEnabled
+    $pass = ConvertTo-SecureString $DSParameters.Password -AsPlainText
+    [pscredential]$creds = New-Object System.Management.Automation.PSCredential ($DSParameters.UserName, $pass)
     
-    #issue with credential being converted to hashtable 
     if ($Global:DSSessionToken)
     {
         # will fail if already connected

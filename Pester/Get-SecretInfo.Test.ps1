@@ -15,11 +15,11 @@ Describe 'Get-SecretInfo' {
     }
 
     It 'gets all secrets' {
-        $entries = Get-SecretInfo -Vault dsSec
+        $entries = Get-SecretInfo -Vault $vault
         $entries.Length | Should -BeGreaterThan 3
     }
     It 'gets secrets based on name' {
-        $entries = Get-SecretInfo -Vault dsSec -Name $entryName
+        $entries = Get-SecretInfo -Vault $vault -Name $entryName
         $entries.Length | Should -Be 2
     }
 

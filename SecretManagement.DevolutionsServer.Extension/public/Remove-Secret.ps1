@@ -21,16 +21,10 @@ function Remove-Secret
             throw [System.Exception] "Vault $($vauldId) not found."
         }
 
-        Write-Verbose "Parsing entry name" -Verbose:$verboseEnabled
-        $entryId
-        try {
-            $entryId = [System.Guid]::Parse($Name)
-        }
-        catch {
-            $entryId = Read-Host 'Devolutions Server Entry Id '
-        }
+        $entry = Get-Entry($Name)
 
-        Remove-DSEntry -CandidEntryID $entryId
+        Write-Verbose "Removing $($entry.id)" -Verbose:$verboseEnabled
+        Remove-DSEntry -CandidEntryID $entry.id
     }
     catch {
         Write-Error $_.Exception.Message

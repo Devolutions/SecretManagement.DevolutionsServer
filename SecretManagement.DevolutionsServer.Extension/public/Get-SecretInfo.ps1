@@ -16,24 +16,23 @@ function Get-SecretInfo
     $dsParameters = (Get-SecretVault -Name $VaultName).VaultParameters
     Connect-DevolutionsServer($dsParameters);
 
-    $vauldId = Get-VaultId($dsParameters)            
-    if (-not $vauldId) {
+    $vaultId = Get-VaultId($dsParameters)            
+    if (-not $vaultId) {
         throw [System.Exception] "Vault $($vauldId) not found."
     }
     
     try {
         $dsEntries = [System.Collections.ArrayList]::new();
         Write-Verbose "Get-DSEntries $($vaultId)" -Verbose:$verboseEnabled
-        $entries = Get-DSEntries $vaultId | Select-Object -ExpandProperty originalResponse | ConvertFrom-Json | Select-Object -ExpandProperty data
         
-        foreach ($entry in $entries) {
+        $entries = (Get-DSEntry -All -VaultId $vaultId).Body.data
+        Write-Verbose "$($entries.length) entries in vault."
+        foreach ($entry in $entries)
+        {
             try {
-                $connection = [xml]$entry
-
-                #group check could be more robust
-                if ($Filter -eq "*" -or $connection.Connection.Name -match $Filter -and -not $connection.Connection.IsGroup) {
-                    $dsEntries.Add($connection)
-                    Write-Verbose "Added $($connection.Connection.Name) TYPE: $($connection.Connection.ConnectionType)" -Verbose:$verboseEnabled
+                if($Filter -eq "*" -or $entry.name -match $Filter){
+                    $dsEntries.Add($entry)
+                    Write-Verbose "Added $($entry.name)" -Verbose:$verboseEnabled
                 }
             }
             catch {
@@ -44,11 +43,11 @@ function Get-SecretInfo
         Write-Verbose "Found Entries: $($dsEntries.Count)" -Verbose:$verboseEnabled
     
         return $dsEntries | ForEach-Object {
-            if ($_.Connection.Group -eq "") {
-                $entryName = $_.Connection.Name
+            if ($_.group -eq "") {
+                $entryName = $_.name
             }
             else {
-                $entryName = $_.Connection.Group + "\" + $_.Connection.Name
+                $entryName = $_.group + "\" + $_.name
             }
 
             [Microsoft.PowerShell.SecretManagement.SecretInformation]::new(
@@ -56,7 +55,7 @@ function Get-SecretInfo
                 [Microsoft.PowerShell.SecretManagement.SecretType]::PSCredential,
                 $VaultName, # display name instead of guid when applicable
                 @{
-                    EntryId = $_.Connection.ID
+                    EntryId = $_.ID
                 }
             )
         } | Sort-Object -Property Name -Unique # Multiple entries with the same name are trimmed to prevent issue with SecretManagement
