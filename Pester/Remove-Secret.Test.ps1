@@ -6,33 +6,59 @@ Describe 'Remove-Secret' {
             throw "Vault not configured properly"
         }
 
+        $url = Read-Host 'url '
+        $cred = Get-Credential
+        $vaultId = Read-Host "vaultId "
+
+        New-DSSession -Credential $cred -BaseUri $url
+
         $entryName = "pester-test-entry-00F09AEB"
         $folderName = "pester"
+        
+        $nbInitialEntries = (Get-DSEntry -All -VaultID $vaultId).Body.data.length
+
+        $newEntry = New-DSCredentialEntry -EntryName $entryName -Username "test" -Password "123" -VaultID $vaultId
+        $id = $newEntry.Body.data.id
+
+        $newEntry = New-DSCredentialEntry -EntryName $entryName -Username "test" -Password "123" -VaultID $vaultId -Folder $folderName
+        $folderId = $newEntry.Body.data.id
+        
+        $newEntries = @($id, $folderId)
     }
 
     It 'removes an entry in root' {
-        Set-Secret -Vault $vault -Name $entryName "pass"
-        $entries = Get-SecretInfo -Vault $vault -Name $entryName 
-        if ($entries.Length -ne 1) {
+        
+        $baseEntry = Get-DSEntry -VaultID $vaultId -EntryId $id
+        if ($baseEntry.Length -ne 1) {
             # should stop something is wrong
             $false | Should -Be $true
         }
         
-        Remove-Secret -Vault $vault -Name $entries[0].Metadata.EntryId
-        $entries = Get-SecretInfo -Vault $vault -Name $entryName 
-        $entries.Length | Should -Be 0
+        Remove-Secret -Vault $vault -Name $id
+        
+        New-DSSession -Credential $cred -BaseUri $url
+        (Get-DSEntry -VaultID $vaultId -EntryId $id).isSuccess | Should -not -be $true
     }
     It 'removes an entry in a group' {
-        $groupedEntryName = $folderName + "\" + $entryName
-        Set-Secret -Vault $vault -Name $groupedEntryName "pass"
-        $entries = Get-SecretInfo -Vault $vault -Name $entryName
-        if ($entries.Length -ne 1) {
+        $baseEntry = Get-DSEntry -VaultID $vaultId -EntryId $folderId
+        if ($baseEntry.Length -ne 1) {
             # should stop something is wrong
-            $entries.Length | Should -Be 1
+            $false | Should -Be $true
         }
         
-        Remove-Secret -Vault $vault -Name $entries[0].Metadata.EntryId
-        $entries = Get-SecretInfo -Vault $vault -Name $entryName 
-        $entries.Length | Should -Be 0
+        Remove-Secret -Vault $vault -Name $folderId
+        
+        New-DSSession -Credential $cred -BaseUri $url
+        (Get-DSEntry -VaultID $vaultId -EntryId $folderId).isSuccess | Should -not -be $true
+    }
+
+    AfterAll {
+        New-DSSession -Credential $cred -BaseUri $url
+
+        Foreach ($id in $newEntries) {
+            Remove-DSEntry -CandidEntryID $id -VaultId $vaultId
+        }
+
+        Close-DSSession
     }
 }
