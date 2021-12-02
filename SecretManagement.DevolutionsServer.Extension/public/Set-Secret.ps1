@@ -42,7 +42,6 @@ function Set-Secret {
             }
         }
         
-        # null reference in the DS module
         New-DSCredentialEntry -VaultId $vaultId -EntryName $Name -Username $username -Password $password
         Write-Verbose "Entry Added" -Verbose:$verboseEnabled
     }

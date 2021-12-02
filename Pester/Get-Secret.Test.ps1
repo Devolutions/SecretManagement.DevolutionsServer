@@ -51,11 +51,6 @@ Describe 'Get-Secret' {
             $entry = Get-Secret -Vault $vault -Name "pester\pester-folder-test-name"
             $entry.UserName | Should -Not -Be $null
         }
-        # It 'gets entry by name in a virtual folder' {
-        #     $username = "VirtualUser"
-        #     $entry = Get-Secret -Vault dsSec -Name "Pester\Virtual\Virtual-Secret"
-        #     $entry.UserName | Should -Be $username
-        # }
     }
 
     context 'Get partial credential' {

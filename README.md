@@ -2,7 +2,7 @@
 
 This module is an implementation of Powershell SecretManagement for Devolutions Server.
 
-**Note:** Due to the encryption model of Devolutions Server, operations are much faster when providing the id of an entry rather than its name. The _vault id_ and _entry id_ appear in the URL when opening an entry (eg. `http://devolutions.net/server/connections/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`).
+**Note:** The _vault id_ and _entry id_ appear in the URL when opening an entry (eg. `http://devolutions.net/server/connections/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`).
 
 ## Quick Start
 

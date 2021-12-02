@@ -24,13 +24,12 @@ function Get-SecretInfo
     try {
         $dsEntries = [System.Collections.ArrayList]::new();
         Write-Verbose "Get-DSEntries $($vaultId)" -Verbose:$verboseEnabled
-        
+
         $entries = (Get-DSEntry -All -VaultId $vaultId).Body.data
         Write-Verbose "$($entries.length) entries in vault."
-        foreach ($entry in $entries)
-        {
+        foreach ($entry in $entries) {
             try {
-                if($Filter -eq "*" -or $entry.name -match $Filter){
+                if ($Filter -eq "*" -or $entry.name -match $Filter) {
                     $dsEntries.Add($entry)
                     Write-Verbose "Added $($entry.name)" -Verbose:$verboseEnabled
                 }
