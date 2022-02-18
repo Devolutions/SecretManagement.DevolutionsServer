@@ -1,14 +1,17 @@
 Describe 'Remove-Secret' {
     BeforeAll {
-        $vault = Read-Host 'Vault ';
+        $vault = Read-Host 'Secret vault name: ';
 
         if (-not (Test-SecretVault -Name $vault)) {
             throw "Vault not configured properly"
         }
 
-        $url = Read-Host 'url '
-        $cred = Get-Credential
-        $vaultId = Read-Host "vaultId "
+        $vaultParameters = (Get-SecretVault -name $vault).VaultParameters
+
+        $url = $vaultParameters.Url
+        $pass = ConvertTo-SecureString $vaultParameters.Password -AsPlainText
+        $cred = New-Object System.Management.Automation.PSCredential ($vaultParameters.UserName, $pass)
+        $vaultId = $vaultParameters.VaultId
 
         New-DSSession -Credential $cred -BaseUri $url
 

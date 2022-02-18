@@ -16,9 +16,9 @@ function Remove-Secret
     Connect-DevolutionsServer($dsParameters);
     Write-Verbose $Global:DSSessionToken -Verbose:$verboseEnabled
     try {
-        $vauldId = Get-VaultId($dsParameters) 
+        $vaultId = Get-VaultId($dsParameters) 
         if (-not $vaultId) {
-            throw [System.Exception] "Vault $($vauldId) not found."
+            throw [System.Exception] "Vault $($vaultId) not found."
         }
 
         $entry = Get-Entry($Name)
