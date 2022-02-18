@@ -20,7 +20,8 @@ Register the vault with the following command:
 ```powerShell
 Register-SecretVault -Name 'SecretVaultName' -ModuleName 'SecretManagement.DevolutionsServer' -VaultParameters @{
     Url = "https://myvault.devolutions.app"
-    Credentials = Get-Credential
+    UserName = "username"
+    Password = "P4ssW0rd"
     VaultId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }
 ```
