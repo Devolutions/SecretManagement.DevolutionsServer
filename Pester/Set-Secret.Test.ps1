@@ -1,6 +1,6 @@
 Describe 'Set-Secret' {
     BeforeAll {
-        $vault = Read-Host 'Vault ';
+        $vault = Read-Host 'Secret vault name: ';
 
         if (-not (Test-SecretVault -Name $vault)) {
             throw "Vault not configured properly"
