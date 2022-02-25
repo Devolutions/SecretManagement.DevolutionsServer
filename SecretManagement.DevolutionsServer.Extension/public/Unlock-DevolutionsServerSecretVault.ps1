@@ -7,7 +7,6 @@ function Unlock-DevolutionsServerSecretVault
         # [hashtable] $AdditionalParameters
     )
 
-    # $verboseEnabled = $AdditionalParameters.ContainsKey('Verbose') -and ($AdditionalParameters['Verbose'] -eq $true)
     Write-Verbose "Unlocking Vault: $VaultName" -Verbose:$verboseEnabled
     Set-Variable -Name "Vault_${VaultName}_VaultPassword" -Scope Script -Value $Password -Force
 
