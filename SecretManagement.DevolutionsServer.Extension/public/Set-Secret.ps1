@@ -13,7 +13,7 @@ function Set-Secret {
     Write-Verbose "Get-SecretInfo Vault: $VaultName" -Verbose:$verboseEnabled
     
     $dsParameters = (Get-SecretVault -Name $VaultName).VaultParameters
-    Connect-DevolutionsServer($dsParameters);
+    Connect-DevolutionsServer -VaultName $VaultName -DSParameters $dsParameters
     Write-Verbose $Global:DSSessionToken -Verbose:$verboseEnabled
     try {
         $vaultId = Get-VaultId($dsParameters) 

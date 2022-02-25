@@ -8,14 +8,16 @@ function Get-Secret {
         [string] $VaultName,
         [hashtable] $AdditionalParameters
     )
-
+    
+    $AsPlainText = $AdditionalParameters.ContainsKey('AsPlainText') -and ($AdditionalParameters['AsPlainText'] -eq $true)
     $verboseEnabled = $AdditionalParameters.ContainsKey('Verbose') -and ($AdditionalParameters['Verbose'] -eq $true)
     Write-Verbose "Get-SecretInfo Vault: $VaultName" -Verbose:$verboseEnabled
     
-    $dsParameters = (Get-SecretVault -Name $VaultName).VaultParameters
-    Connect-DevolutionsServer($dsParameters);
-    Write-Verbose $Global:DSSessionToken -Verbose:$verboseEnabled
     try {
+        $dsParameters = (Get-SecretVault -Name $VaultName).VaultParameters
+        Connect-DevolutionsServer -VaultName $VaultName -DSParameters $dsParameters
+        Write-Verbose $Global:DSSessionToken -Verbose:$verboseEnabled
+
         $vaultId = Get-VaultId($dsParameters) 
         if (-not $vaultId) {
             throw [System.Exception] "Vault $($vaultId) not found."
@@ -54,11 +56,17 @@ function Get-Secret {
                 $securePassword = ConvertTo-SecureString -String $password -AsPlainText
             }
 
-            return New-Object PSCredential -ArgumentList ([pscustomobject] @{ UserName = $username; Password = $securePassword[0] }) 
+            if(-not $AsPlainText){
+                return New-Object PSCredential -ArgumentList ([pscustomobject] @{ UserName = $username; Password = $securePassword[0] }) 
+            }
+            else {
+                $test = ConvertFrom-SecureString -SecureString $password -AsPlainText
+                return @{ UserName = $username; Password = $test }
+            }
         }
     }
     catch {
-        Write-Error $_.Exception.Message
+        Write-Error $_.Exception.Message 
     }
     finally {
         Disconnect-DevolutionsServer($dsParameters);
