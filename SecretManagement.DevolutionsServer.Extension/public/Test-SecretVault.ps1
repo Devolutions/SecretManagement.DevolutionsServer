@@ -6,8 +6,10 @@ function Test-SecretVault {
         [hashtable] $AdditionalParameters
     )
 
-    $verboseEnabled = $AdditionalParameters.ContainsKey('Verbose') -and ($AdditionalParameters['Verbose'] -eq $true)
-    Write-Verbose "Test-SecretVault: $VaultName" -Verbose:$verboseEnabled
+    if ($AdditionalParameters) {
+        $verboseEnabled = $AdditionalParameters.ContainsKey('Verbose') -and ($AdditionalParameters['Verbose'] -eq $true)
+        Write-Verbose "Test-SecretVault: $VaultName" -Verbose:$verboseEnabled
+    }
 
     $dsParameters = (Get-SecretVault -Name $VaultName).VaultParameters
     try {
@@ -15,8 +17,7 @@ function Test-SecretVault {
             throw "Vault Id isn't set."
         }
 
-        Write-Verbose "Parameters : $dsParameters" -Verbose:$verboseEnabled
-        Connect-DevolutionsServer($dsParameters)
+        Connect-DevolutionsServer -VaultName $VaultName -DSParameters $dsParameters
         return $true
     }
     catch {
@@ -24,7 +25,6 @@ function Test-SecretVault {
         return $false
     }
     finally {
-        Disconnect-DevolutionsServer($dsParameters)
+        $disconnectResult = Disconnect-DevolutionsServer($dsParameters)
     }
-    
 }

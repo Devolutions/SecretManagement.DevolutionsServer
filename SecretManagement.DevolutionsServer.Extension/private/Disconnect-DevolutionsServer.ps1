@@ -8,7 +8,7 @@ function Disconnect-DevolutionsServer {
     )
     
     Write-Verbose "Closing Devolutions Server Session" -Verbose:$verboseEnabled
-    if ($Global:DSSessionToken)
+    if ($Global:WebSession)
     {
         Close-DSSession
     }

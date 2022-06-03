@@ -4,6 +4,7 @@ using namespace Devolutions.Server
 function Connect-DevolutionsServer {
     [CmdletBinding()]
     param(
+        [Parameter(Mandatory)][string]$VaultName,
         [hashtable] $DSParameters
     )
     
@@ -13,10 +14,41 @@ function Connect-DevolutionsServer {
     
     Write-Verbose $DSParameters.VaultId -Verbose:$verboseEnabled
     Write-Verbose 'Connecting to Devolutions Server' -Verbose:$verboseEnabled
-    $pass = ConvertTo-SecureString $DSParameters.Password -AsPlainText
+
+    $password = $DSParameters.Password
+    if (-not $password) {
+        $password = Get-Variable -Name "Vault_${VaultName}_VaultPassword" -ValueOnly
+    }
+
+    if (-not $password){
+        Write-Verbose 'No Password available' -Verbose:$verboseEnabled
+        $p = Read-Host "Password"        
+        $sp = ConvertTo-SecureString -String $p -AsPlainText
+
+        Write-Verbose 'Unlocking' -Verbose:$verboseEnabled
+        Unlock-DevolutionsServerSecretVault -VaultName $VaultName -Password $sp
+        $pass = Get-Variable -Name "Vault_${VaultName}_VaultPassword" -ValueOnly
+    }
+    else {
+        Write-Verbose 'Password was provided' -Verbose:$verboseEnabled
+        switch ($password.GetType()) {
+            ([securestring]) {
+                $pass = $password
+            }
+            ([string]) {
+                $pass = ConvertTo-SecureString -String $password -AsPlainText
+            }
+        }
+    }
+
+    if (-not $pass) {
+        Write-Verbose 'Password error' -Verbose:$verboseEnabled
+        return
+    }
+
     [pscredential]$creds = New-Object System.Management.Automation.PSCredential ($DSParameters.UserName, $pass)
     
-    if ($Global:DSSessionToken)
+    if ($Global:WebSession)
     {
         # will fail if already connected
         Close-DSSession

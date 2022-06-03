@@ -1,6 +1,6 @@
 Describe 'Remove-Secret' {
     BeforeAll {
-        $vault = Read-Host 'Secret vault name: ';
+        $vault = Read-Host 'Secret vault name';
 
         if (-not (Test-SecretVault -Name $vault)) {
             throw "Vault not configured properly"

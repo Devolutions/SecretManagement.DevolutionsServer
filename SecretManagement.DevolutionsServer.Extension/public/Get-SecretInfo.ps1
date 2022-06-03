@@ -14,7 +14,7 @@ function Get-SecretInfo
     Write-Verbose "Get-SecretInfo Vault: $VaultName" -Verbose:$verboseEnabled
     
     $dsParameters = (Get-SecretVault -Name $VaultName).VaultParameters
-    Connect-DevolutionsServer($dsParameters);
+    Connect-DevolutionsServer -VaultName $VaultName -DSParameters $dsParameters
 
     $vaultId = Get-VaultId($dsParameters)            
     if (-not $vaultId) {

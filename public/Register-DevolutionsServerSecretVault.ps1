@@ -25,8 +25,11 @@ function Register-DevolutionsServerSecretVault
 
     Register-SecretVault -ModuleName $ModuleName -Name $Name -VaultParameters @{
         Url = $Url
+        UserName = $Credentials.UserName
+        Password = ConvertFrom-SecureString -SecureString $Credentials.Password -AsPlainText
+        SafePassword = $Credentials.Password
         Credentials = $Credentials
-        VaultId = $VaultId
+        VaultId = $vaultId
     }
 
     if (-not (Get-SecretVault -Name $name)) {
