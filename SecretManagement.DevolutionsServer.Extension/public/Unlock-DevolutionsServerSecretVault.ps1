@@ -4,7 +4,6 @@ function Unlock-DevolutionsServerSecretVault
     param (
         [Parameter(Mandatory)][String]$VaultName,
         [Parameter(Mandatory)][SecureString]$Password
-        # [hashtable] $AdditionalParameters
     )
 
     Write-Verbose "Unlocking Vault: $VaultName" -Verbose:$verboseEnabled
