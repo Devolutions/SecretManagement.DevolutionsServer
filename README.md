@@ -57,5 +57,3 @@ Remove an entry from the stored vault.
 ```powershell
 Remove-Secret -Vault 'SecretVaultName' -Name 'entryID'
 ```
-
-
