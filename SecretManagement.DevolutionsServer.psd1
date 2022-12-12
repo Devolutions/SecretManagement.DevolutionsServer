@@ -8,7 +8,7 @@
 RootModule = 'SecretManagement.DevolutionsServer.psm1'
 
 # Version number of this module.
-ModuleVersion = '2022.3.2.0'
+ModuleVersion = '2022.3.2.1'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core')
@@ -54,7 +54,7 @@ RequiredModules = @(
     }, 
     @{
         ModuleName = 'Devolutions.Server'
-        ModuleVersion = '2022.3.2.0'
+        ModuleVersion = '2022.3.7.4'
     }
 )
 
